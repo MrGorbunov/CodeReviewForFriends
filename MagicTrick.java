@@ -88,6 +88,13 @@ public class MagicTrick
     */
     public static ArrayList<String> layoutDeck (ArrayList<String> NewDeck, int times)
     {
+        // During the course of this program, you continually seperate the deck (NewDeck) into
+        // these 3 seperate lists, why not just keep them as 3 seperate lists?
+        // (ok, well using returns as you do, that would've been difficult because you can't return multiple variables,
+        //  but the change is worthwhile)
+        //
+        // On later inspection I realized that you're actually mixing everything together and not
+        // just moving the columns around so you eventually still need a single list. Woops!
         ArrayList<String> firstcolumn = new ArrayList<String>();
         ArrayList<String> secondcolumn = new ArrayList<String>();
         ArrayList<String> thirdcolumn = new ArrayList<String>();
@@ -190,6 +197,7 @@ public class MagicTrick
         return NewDeck;
     }
 
+    // It makes more sense to just pass the actual card (i.e. as a String) into this function instead of the whole ArrayList
     public static void revealAnswer (ArrayList<String> DoneDeck)
     {
         JOptionPane.showMessageDialog(null,"I figured it out! Your card was the " + DoneDeck.get(10));
@@ -198,6 +206,7 @@ public class MagicTrick
         {
             JOptionPane.showMessageDialog(null, "Thanks for playing!");
         }
+        // Why is this a .contains() instead of .equals()?
         else if (again.contains("y"))
         {
             main(null);
