@@ -6,22 +6,21 @@ public class MagicTrick_Changed
 {
     public static void main(String[] args)
     {
-        String[] numbers = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
-        String[] type = {"♥", "♦", "♠", "♣"};
-        playGame(numbers, type);
+        playGame();
     }
 
-    public static void playGame(String[] numbers, String[] type)
+    public static void playGame()
     {
         showIntroDialogue();
-        ArrayList<String> NewDeck = shuffleDeck(numbers, type);
-        int times = 2;
-        ArrayList<String> NewDeck2 = layoutDeck(NewDeck, times);
-        times = times - 1;
-        ArrayList<String> NewDeck3 = layoutDeck(NewDeck2, times);
-        times = times - 1;
-        ArrayList<String> DoneDeck = layoutDeck(NewDeck3, times);
-        revealAnswer(DoneDeck);
+
+        String[] cardValues = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+        String[] cardSuites = {"♥", "♦", "♠", "♣"};
+
+        ArrayList<String> newDeck = shuffleDeck(cardValues, cardSuites);
+        ArrayList<String> newDeck2 = layoutDeck(newDeck, 2);
+        ArrayList<String> newDeck3 = layoutDeck(newDeck2, 1);
+        ArrayList<String> doneDeck = layoutDeck(newDeck3, 0);
+        revealAnswer(doneDeck);
     }
 
     public static void showIntroDialogue()
@@ -33,22 +32,23 @@ public class MagicTrick_Changed
     public static ArrayList<String> shuffleDeck(String[] name, String[] suit)
     {
         ArrayList<String> shuffledDeck = new ArrayList<String>();
-        Random first = new Random();
-        Random second = new Random();
-        int secondrand = second.nextInt(4);
-        int firstrand = first.nextInt(13);
-        shuffledDeck.add(name[firstrand] + " of " + suit[secondrand]);
+        Random rand = new Random();
+        int randSuitInd = rand.nextInt(4);
+        int randValueInd = rand.nextInt(13);
+        shuffledDeck.add(name[randValueInd] + " of " + suit[randSuitInd]);
 
         while (shuffledDeck.size() <= 21)
         {
-            secondrand = second.nextInt(4);
-            firstrand = first.nextInt(13);
+            randSuitInd = rand.nextInt(4);
+            randValueInd = rand.nextInt(13);
+            String potentialCard = name[randValueInd] + " of " + suit[randSuitInd];
 
-            if (!shuffledDeck.contains(name[firstrand] + " of " + suit[secondrand]))
+            if (!shuffledDeck.contains(potentialCard))
             {
-                shuffledDeck.add(name[firstrand] + " of " + suit[secondrand]);
+                shuffledDeck.add(potentialCard);
             }
         }
+
         return shuffledDeck;
     }
 
@@ -61,34 +61,22 @@ public class MagicTrick_Changed
         int cardindex = 0;
         for(int i = 0; i < 7; i++)
         {
-            for(int j = 0; j < 3; j++)
-            {
-                if (j == 0)
-                {
-                    firstcolumn.add(NewDeck.get(cardindex));
-                }
-                if (j == 1)
-                {
-                    secondcolumn.add(NewDeck.get(cardindex));
-                }
-                if (j == 2)
-                {
-                    thirdcolumn.add(NewDeck.get(cardindex));
-                }
-                cardindex++;
-            }
+            firstcolumn.add(NewDeck.get(cardindex));
+            secondcolumn.add(NewDeck.get(cardindex + 1));
+            thirdcolumn.add(NewDeck.get(cardindex + 2));
+            cardindex += 3;
         }
 
-        String ans = JOptionPane.showInputDialog(
-                "\n Column 1:                       Column 2:                          Column 3:\n\n" +
-                        "   " + firstcolumn.get(0) + "                              " + secondcolumn.get(0) + "                              " + thirdcolumn.get(0) + "\n" +
-                        "   " + firstcolumn.get(1) + "                              " + secondcolumn.get(1) + "                              " + thirdcolumn.get(1) + "\n" +
-                        "   " + firstcolumn.get(2) + "                              " + secondcolumn.get(2) + "                              " + thirdcolumn.get(2) + "\n" +
-                        "   " + firstcolumn.get(3) + "                              " + secondcolumn.get(3) + "                              " + thirdcolumn.get(3) + "\n" +
-                        "   " + firstcolumn.get(4) + "                              " + secondcolumn.get(4) + "                              " + thirdcolumn.get(4) + "\n" +
-                        "   " + firstcolumn.get(5) + "                              " + secondcolumn.get(5) + "                              " + thirdcolumn.get(5) + "\n" +
-                        "   " + firstcolumn.get(6) + "                              " + secondcolumn.get(6) + "                              " + thirdcolumn.get(6) + "\n\n" +
-                        "Type below which column your card is in [either '1', '2', or '3']. We will do this a total of " + times +  " more time(s)");
+        String whitespaceGap = "                              ";
+        StringBuilder deckDisplay = new StringBuilder();
+        deckDisplay.append("\n");
+        deckDisplay.append(" Column 1:                       Column 2:                          Column 3:\n\n");
+        for (int i=0; i<=6; i++) {
+            deckDisplay.append("   " + firstcolumn.get(i) + whitespaceGap + secondcolumn.get(i) + whitespaceGap + thirdcolumn.get(i) + "\n");
+        }
+        deckDisplay.append("Type below which column your card is in [either '1', '2', or '3']. We will do this a total of " + times +  " more time(s)");
+
+        String ans = JOptionPane.showInputDialog(deckDisplay.toString());
 
 
         NewDeck.clear();
@@ -113,17 +101,8 @@ public class MagicTrick_Changed
         }
         else
         {
-            String again = JOptionPane.showInputDialog("I'm sorry but it seems you have inputted an invalid response\n"+
-            "Would you like to play again? ['y' for yes and 'n' for no]"
-            );
-            if(!again.equals("y"))
-            {
-                JOptionPane.showMessageDialog(null, "Thanks for playing!!");
-            }
-            else
-            {
-                main(null);
-            }
+            JOptionPane.showMessageDialog(null, "I'm sorry but it seems you have inputted an invalid response\n");
+            restartPrompt();
         }
         return NewDeck;
     }
@@ -131,6 +110,10 @@ public class MagicTrick_Changed
     public static void revealAnswer (ArrayList<String> DoneDeck)
     {
         JOptionPane.showMessageDialog(null,"I figured it out! Your card was the " + DoneDeck.get(10));
+        restartPrompt();
+    }
+
+    public static void restartPrompt () {
         String again = JOptionPane.showInputDialog("Would you like to play again? ['y' for yes and 'n' for no]");
         if(again.equals("n"))
         {
@@ -143,7 +126,7 @@ public class MagicTrick_Changed
         else
         {
             JOptionPane.showMessageDialog(null, "Unidentified answer. Please type it in again!");
-            revealAnswer(DoneDeck);
+            restartPrompt();
         }
     }
 }
